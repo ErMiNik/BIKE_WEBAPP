@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && nodemon app.js",
+    "client": "cd client && npm start"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "cros": "^1.1.0"
+  }
+}
