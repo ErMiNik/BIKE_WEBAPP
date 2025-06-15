@@ -11,3 +11,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Add this to index.css or global styles */
+.leaflet-container {
+  height: 80vh;
+  width: 100%;
+}

@@ -1,20 +1,51 @@
-// Example: client/src/pages/Home.jsx
-import { useEffect, useState } from "react";
+// client/src/pages/Home.jsx
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import 'leaflet-routing-machine';
+import { useEffect } from 'react';
 
-function Home() {
-  const [message, setMessage] = useState("");
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+});
+
+// 🧭 Custom component to draw route
+function Routing({ from, to }) {
+  const map = useMap();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/hello")
-      .then(res => res.json())
-      .then(data => setMessage(data.message))
-      .catch(err => console.error(err));
-  }, []);
+    if (!map) return;
+
+    const routingControl = L.Routing.control({
+      waypoints: [L.latLng(...from), L.latLng(...to)],
+      routeWhileDragging: false,
+      show: false,
+      addWaypoints: false,
+    }).addTo(map);
+
+    return () => map.removeControl(routingControl);
+  }, [map, from, to]);
+
+  return null;
+}
+
+function Home() {
+  const start = [40.7128, -74.006]; // New York
+  const end = [40.73061, -73.935242]; // Brooklyn
 
   return (
     <div>
-      <h1>Frontend Home Page</h1>
-      <p>Message from backend: {message}</p>
+      <h2>Route between two points</h2>
+      <MapContainer center={start} zoom={13} style={{ height: '80vh', width: '100%' }}>
+        <TileLayer
+          attribution='&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Routing from={start} to={end} />
+      </MapContainer>
     </div>
   );
 }
