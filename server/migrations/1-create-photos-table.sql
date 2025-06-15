@@ -1,0 +1,7 @@
+CREATE TABLE photos (
+  id SERIAL PRIMARY KEY,
+  path TEXT NOT NULL,
+  name TEXT,
+  longitude DOUBLE PRECISION,
+  latitude DOUBLE PRECISION
+);
