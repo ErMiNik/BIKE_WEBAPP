@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd server && nodemon index.js",
+    "server": "cd server && npm start",
     "client": "cd client && npm start",
     "migrate": "node server/migrate.js"
   },
