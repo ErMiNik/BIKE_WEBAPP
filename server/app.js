@@ -20,7 +20,3 @@ app.use('/api/photos', photosRoutes);
 app.use('/api', healthRoutes);
 
 module.exports = app;
-
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
