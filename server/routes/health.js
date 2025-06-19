@@ -12,4 +12,19 @@ router.get('/db_ping', async (req, res) => {
   }
 });
 
+router.get('/tables', async(req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT table_name
+      FROM information_schema.tables
+      WHERE table_schema = 'public'
+      AND table_type = 'BASE TABLE';`
+    );
+    res.json(result.rows);
+  } catch(err){
+    console.log('DB Tables fetch failed:', err);
+    res.status(500).send('❌ DB Tables fetch failed')
+  }
+});
+
 module.exports = router;

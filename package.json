@@ -3,13 +3,14 @@
     "concurrently": "^9.1.2",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^8.0.0",
-    "node-pg-migrate": "^8.0.2"
+    "node-pg-migrate": "^8.0.3"
   },
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd server && npm start",
-    "client": "cd client && npm start",
-    "migrate": "node server/migrate.js"
+    "server": "cd server && npm run start",
+    "client": "cd client && npm run start",
+
+    "migrate": "cd server && npm run migrate"
   },
   "dependencies": {
     "cors": "^2.8.5",
