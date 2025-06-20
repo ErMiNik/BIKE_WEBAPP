@@ -1,68 +1,44 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import "../css/Upload.css";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import L from "leaflet";
+import { useMapEvents, useGeoLocation } from "react-leaflet/hooks";
+import L, { geoJSON } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-function LocationPicker({ onPick }) {
+function FlyToLocation({ location }) {
   const map = useMap();
 
   useEffect(() => {
-    const handleClick = (e) => {
-      const { lat, lng } = e.latlng;
-      onPick([lat, lng]);
-    };
-
-    map.on("click", handleClick);
-    return () => {
-      map.off("click", handleClick);
-    };
-  }, [map, onPick]);
+    if (location) {
+      map.flyTo(location, 16, {
+        duration: 1,
+      });
+    }
+  }, [location, map]);
 
   return null;
 }
 
-function ChangeMapView({ coords }) {
-  const map = useMap();
-  useEffect(() => {
-    if (coords) {
-      map.setView(coords, 13);
-    }
-  }, [coords]);
+function SetMarker({ setLocation }) {
+  useMapEvents({
+    click(e) {
+      setLocation([e.latlng.lat, e.latlng.lng]);
+    },
+  });
+
   return null;
 }
 
 function Upload() {
+  const default_location = [48.15346810283932, 17.071976065635685];
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [fetching, setFetching] = useState(false);
   const [name, setName] = useState("");
   const [files, setFiles] = useState([]);
 
-  const fetchLocation = () => {
-    setFetching(true);
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocation([position.coords.latitude, position.coords.longitude]);
-        setError(null);
-        setFetching(false);
-      },
-      (err) => {
-        setError(err.message);
-        setFetching(false);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      }
-    );
-  };
-
   const handleName = (e) => {
     setName(e.target.value);
-    console.log(e.target.value);
   };
 
   const handleFiles = (e) => {
@@ -76,13 +52,40 @@ function Upload() {
     e.preventDefault();
   };
 
+  const fetchLocation = (e) => {
+    setFetching(true);
+    const geoLoc = navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        const coords = [latitude, longitude];
+        setLocation(coords);
+      },
+      (err) => {
+        setError(err);
+        alert("Error fetching locatoin:", err);
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+      }
+    );
+  };
+
   useEffect(() => {
     if (location) {
+      setFetching(false);
       console.log("Location updated:", location);
     }
+  }, [location]);
 
+  useEffect(() => {
     console.log(name);
-  }, [location, name, files]);
+  }, [name]);
+
+  useEffect(() => {
+    console.log(files);
+    console.log(files.length);
+  }, [files]);
 
   return (
     <div className="upload-wrapper">
@@ -117,14 +120,37 @@ function Upload() {
             <li key={index}>{f.name}</li>
           ))}
         </ul>
+        {files.length > 0 && (
+          <div className="image-container">
+            {files.map((file, index) => {
+              if (file.type.startsWith("image/")) {
+                const previewUrl = URL.createObjectURL(file);
+                return (
+                  <div>
+                    <img
+                      key={index}
+                      src={previewUrl}
+                      alt={file.name}
+                      style={{
+                        objectFit: "cover",
+                      }}
+                      onLoad={() => URL.revokeObjectURL(previewUrl)}
+                    />
+                    <span>{file.name}</span>
+                  </div>
+                );
+              }
+            })}
+          </div>
+        )}
 
         <button
-          disabled={fetching}
           className="btn"
+          disabled={fetching}
           type="button"
           onClick={fetchLocation}
         >
-          Fetch location
+          Fetch Location
         </button>
 
         {fetching && (
@@ -133,29 +159,32 @@ function Upload() {
           </>
         )}
 
-        {location && (
-          <div style={{ height: "400px", marginTop: "20px" }}>
+        {
+          <div
+            className="leaflet-map"
+            style={{ height: "400px", marginTop: "20px" }}
+          >
             <MapContainer
-              center={location || [51.505, -0.09]}
+              center={location || default_location}
               zoom={13}
               style={{ height: "100%", width: "100%" }}
+              whenReady={fetchLocation}
             >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               />
-
-              <ChangeMapView coords={[location[0], location[1]]} />
-              <Marker position={[location[0], location[1]]}>
-                <Popup>You are here!</Popup>
+              <Marker position={location ? location : default_location}>
+                <Popup>Your location :3</Popup>
               </Marker>
-              <LocationPicker onPick={(coords) => setLocation(coords)} />
+              <FlyToLocation location={location} />
+              {!fetching && <SetMarker setLocation={setLocation} />}
             </MapContainer>
           </div>
-        )}
+        }
 
         <button
-          disabled={!location || !name || !files}
+          disabled={!location || !name || files.length == 0}
           onSubmit={handleSubmit}
           className="btn submit-btn"
           type="submit"
