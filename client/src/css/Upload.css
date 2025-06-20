@@ -77,3 +77,24 @@ button:disabled {
 button:hover:disabled {
   background-color: lightgray;
 }
+
+.image-container {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: start;
+}
+
+.image-container > div {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  border: 2px solid black;
+}
+
+.image-container img {
+  height: 200px;
+  width: 200px;
+  object-fit: contain;
+  margin: 0 10px;
+}
