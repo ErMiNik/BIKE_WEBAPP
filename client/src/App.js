@@ -1,8 +1,8 @@
 // client/src/App.jsx
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
-import Stats from "./pages/Stats";
-import Media from "./pages/Media";
+import PhotoData from "./pages/PhotoData";
+import MapView from "./pages/MapView";
 import Upload from "./pages/Upload";
 
 function App() {
@@ -10,15 +10,15 @@ function App() {
     <Router>
       <nav style={navStyle}>
         <Link to="/">Home</Link>
-        <Link to="/stats">Stats</Link>
-        <Link to="/media">Media</Link>
+        <Link to="/photo_data">Photo data</Link>
+        <Link to="/mapview">Trasa</Link>
         <Link to="/upload">Upload</Link>
       </nav>
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/stats" element={<Stats />} />
-        <Route path="/media" element={<Media />} />
+        <Route path="/photo_data" element={<PhotoData />} />
+        <Route path="/mapview" element={<MapView />} />
         <Route path="/upload" element={<Upload />} />
         <Route path="*" element={<h2>404 Not Found</h2>} />
       </Routes>
