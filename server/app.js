@@ -4,6 +4,7 @@ const cors = require('cors');
 const pool = require('./db');
 const photosRoutes = require('./routes/photos');
 const healthRoutes = require('./routes/health');
+const stravaRoutes = require('./routes/strava');
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
@@ -23,41 +24,8 @@ app.get('/api/mapview', (req, res) => {
 
 
 
-app.get('/api/skuska', (req, res) => {
-  res.json("toto je api skuska")
-});
+app.use('/api/strava', stravaRoutes);
 
-
-
-// app.get('/api/strava', (req, res) => {
-//   require('dotenv').config();
-//   var strava = require('strava-v3')
-//   strava.config({
-//   "access_token"  : process.env.STRAVA_ACCESS_TOCEN
-//   });
-
-//   // Configure OAuth2 access token for authorization: strava_oauth
-//   var strava_oauth = defaultClient.authentications['strava_oauth'];
-//   strava_oauth.accessToken = process.env.STRAVA_ACCESS_TOCEN
-
-//   var api = new StravaApiV3.ActivitiesApi()
-
-//   var id = 14787988619
-
-//   var opts = { 
-//     'includeAllEfforts': true // {Boolean} To include all segments efforts.
-//   };
-
-//   var callback = function(error, data, response) {
-//     if (error) {
-//       console.error(error);
-//     } else {
-//       console.log('API called successfully. Returned data: ' + data);
-//       res.json({data})
-//     }
-//   };
-//   api.getActivityById(id, opts, callback);
-// })
 
 app.use('/api/photos', photosRoutes);
 app.use('/api', healthRoutes);

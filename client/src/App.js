@@ -4,6 +4,9 @@ import Home from "./pages/Home";
 import PhotoData from "./pages/PhotoData";
 import MapView from "./pages/MapView";
 import Upload from "./pages/Upload";
+import Strava from "./pages/StravaAuthPage";
+import StravaAuthPage from './pages/StravaAuthPage';
+import ActivityFetcher from './pages/ActivityFetcher';
 
 function App() {
   return (
@@ -13,6 +16,7 @@ function App() {
         <Link to="/photo_data">Photo data</Link>
         <Link to="/mapview">Trasa</Link>
         <Link to="/upload">Upload</Link>
+        <Link to="/strava">Strava Auth</Link>
       </nav>
 
       <Routes>
@@ -20,6 +24,9 @@ function App() {
         <Route path="/photo_data" element={<PhotoData />} />
         <Route path="/mapview" element={<MapView />} />
         <Route path="/upload" element={<Upload />} />
+        <Route path="/strava" element={<Strava />} />
+        <Route path="/auth/callback" element={<StravaAuthPage />} />
+        <Route path="/activity-fetcher" element={<ActivityFetcher />} />
         <Route path="*" element={<h2>404 Not Found</h2>} />
       </Routes>
     </Router>
